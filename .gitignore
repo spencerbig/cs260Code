@@ -35,3 +35,4 @@
 *.qmake.stash
 *.pro.user*
 Makefile*
+.vscode*
