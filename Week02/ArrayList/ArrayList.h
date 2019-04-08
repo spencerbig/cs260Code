@@ -152,7 +152,7 @@ template <class T>
 ArrayList<T>& ArrayList<T>::operator=(const ArrayList<T>& otherList)
 {
     if(this != &otherList) {
-        //if we aren't at same address as other guy, do copy
+        //if we aren't at same address as other list, do copy
         delete[] list;  //delete old storage
 
         length = otherList.length;
