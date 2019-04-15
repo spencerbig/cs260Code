@@ -89,7 +89,7 @@ int main()
     cout << endl << "Testing merge function - should sort everything from index 2-5" << endl;
     cout << "(999 represents item that should not move)" << endl;
     int mergeTest2[]  = {999,999,4,8,3,12,999};
-    mergeFunc(mergeTest2, 2, 4, 5, temp);
+    mergeFunc(mergeTest2, 2, 3, 5, temp);
     for(int i : mergeTest2)
         cout << i << " ";
     cout << endl;
