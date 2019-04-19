@@ -50,13 +50,9 @@ public:
 
   ~LinkedList();
 
-  void insertStart(T value);
   void insertEnd(T value);
-  T retrieveAt(int index);
-
+  T retrieveStart();
   T removeStart();
-
-  void empty();
 
   template <class R>
   friend ostream& operator <<(ostream& os, const LinkedList<R>& theList);
@@ -110,7 +106,7 @@ void LinkedList<T>::mergeIn(LinkedList<T>& otherList) {
   //As long as both lists still have at least one value...
   while(this->length > 0 && otherList.length > 0) {
       //decide which list to pull from next...
-      if(this->retrieveAt(0) < otherList.retrieveAt(0) ) {
+      if(this->retrieveStart() < otherList.retrieveStart() ) {
           mergeList.insertEnd(this->removeStart());
       } else {
           mergeList.insertEnd(otherList.removeStart());
@@ -165,16 +161,12 @@ LinkedList<T>::LinkedList() {
   length = 0;
 }
 
-template <class T>
-void LinkedList<T>::empty() {
-  while(length > 0) {
-      removeStart();
-  }
-}
 
 template <class T>
 LinkedList<T>::~LinkedList() {
-  empty();
+    while(length > 0) {
+        removeStart();
+    }
 }
 
 
@@ -190,22 +182,6 @@ LinkedList<T>::LinkedList(const LinkedList<T>& otherList) {
   }
 }
 
-
-template <class T>
-LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& otherList) {
-  if( this != &otherList ) {
-      //clear existing storage
-      empty();
-
-      //copy other
-      ListNode<T>* currentInOther = otherList.head;
-      while( currentInOther != nullptr ) {
-          this->insertEnd(currentInOther->data);
-      }
-  }
-
-  return *this;
-}
 
 template <class R>
 ostream& operator <<(ostream& os, const LinkedList<R>& theList) {
@@ -254,6 +230,15 @@ T LinkedList<T>::removeStart() {
 
   return value;
 }
+
+template <class T>
+T LinkedList<T>::retrieveStart() {
+  if(length == 0) {
+      throw out_of_range("Can't retrieveStart from empty list");
+  }
+  return head->data;
+}
+
 
 
 #endif
