@@ -111,24 +111,19 @@ void LinkedList<T>::mergeIn(LinkedList<T>& otherList) {
   while(this->length > 0 && otherList.length > 0) {
       //decide which list to pull from next...
       if(this->retrieveAt(0) < otherList.retrieveAt(0) ) {
-          //TODO - Remove first value from this list and move to merged
-          //You can do fancy pointer moves or just use removeAt(0) and insertEnd
-
+          mergeList.insertEnd(this->removeStart());
       } else {
-          //TODO - first value of otherList to mergeList
-
+          mergeList.insertEnd(otherList.removeStart());
       }
   }
 
   //Now copy any leftover from this list
   while(this->length > 0) {
-      //TODO - first value of this to mergeList
-
+      mergeList.insertEnd(this->removeStart());
   }
   //And any leftover from other list
   while(otherList.length > 0) {
-      //TODO - first value of otherList to mergeList
-
+      mergeList.insertEnd(otherList.removeStart());
   }
 
   //TODO -
@@ -227,29 +222,17 @@ ostream& operator <<(ostream& os, const LinkedList<R>& theList) {
   return os;
 }
 
-template <class T>
-void LinkedList<T>::insertStart(T value) {
-  ListNode<T>* current = new ListNode<T>(value);
-  current->next = head;
-  head = current;
-  length++;
-
-  if(length == 1)
-      tail = head;
-}
-
 
 template <class T>
 void LinkedList<T>::insertEnd(T value) {
-  if(length == 0) {
-      insertStart(value);
-      return;
-  }
-
-  ListNode<T>* current = new ListNode<T>(value);
-  tail->next = current;
-  tail = current;
-  length++;
+    ListNode<T>* current = new ListNode<T>(value);
+    if(length == 0) {
+        head = current;
+    } else {
+        tail->next = current;
+    }
+    tail = current;
+    length++;
 }
 
 
@@ -270,20 +253,6 @@ T LinkedList<T>::removeStart() {
       tail = nullptr;
 
   return value;
-}
-
-template <class T>
-T LinkedList<T>::retrieveAt(int index) {
-  if(index < 0 || index >= length) {
-      throw out_of_range("Bad index in retrieveAt");
-  }
-
-  ListNode<T>* current = head;
-  while(index > 0) {
-      current = current->next;
-      index--;
-  }
-  return current->data;
 }
 
 
