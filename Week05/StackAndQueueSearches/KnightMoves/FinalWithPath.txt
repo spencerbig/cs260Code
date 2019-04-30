@@ -1,0 +1,110 @@
+#include <iostream>
+
+#include <vector>
+
+#include "Queue.h"
+#include "Stack.h"
+#include "Location.h"
+
+using namespace std;
+
+///----------------------Vector helper functions-------------------------
+
+void printVector(const vector<Location>& locList) {
+    for(unsigned int i = 0; i < locList.size(); ++i) {
+        cout << locList[i] << " ";
+    }
+    cout << endl;
+}
+
+bool containsLocation(const vector<Location>& locList, const Location& loc) {
+    for(unsigned int i = 0; i < locList.size(); ++i) {
+        if(locList[i] == loc)
+            return true;
+    }
+    return false;
+}
+
+///-------------------------------------------------------------------
+
+
+
+int main()
+{
+    Location loc1(1, 3);     //starting location
+
+    //Represent each step in search as a stack containing a series of locations
+    // representing path knight could take initial state has just the starting location
+    Stack<Location> state1;     //starting state
+    state1.push(loc1);
+
+    Location goalLocation(8, 8);   //goal location
+
+    //Initialize search storage - we are maintaing a queue that stores stacks of Locations
+    Queue<Stack<Location>> storage;
+    storage.enqueue(state1);
+
+    //List to keep track of states we already know about - avoid cycles
+    vector<Location> seenLocations;
+    seenLocations.push_back(loc1);
+
+    while( !storage.empty() ) {
+        cout << "\n----------------------------------------" << endl;
+        cout << "Seen locations: " << endl;
+        printVector(seenLocations);
+        cout << "States to process:" << endl;
+        cout << storage << endl;
+
+        ///Get the next state to explore from the queue
+        Stack<Location> curState = storage.dequeue();
+        ///Each "state" is a stack - top of stack is the current location of knight
+        Location curLocation = curState.top();
+
+        if(curLocation == goalLocation) {
+            cout << "Found a path: " << curState << endl;
+            break;
+        } else {
+            cout << "Making moves from: " << curState << " --> ";
+        }
+
+        ///Ugly for loops generate each possible move for a knight
+        //Can move up to 2 rows either direction
+        for(int rowMod = -2; rowMod <= 2; rowMod++) {
+            if(rowMod == 0)
+                continue;  //can't move 0 rows
+            //Assume we move only 1 column. If we are moving just 1 row, move 2 cols
+            int colsToMove = 1;
+            if( rowMod == 1 || rowMod == -1 ) colsToMove = 2;
+            for(int colMod = -colsToMove; colMod <= colsToMove; colMod+= 2*colsToMove) {
+
+                ///Make a new possible move
+                Location newLocation = curLocation;
+                newLocation.row += rowMod;
+                newLocation.col += colMod;
+
+                //Only keep moves that are on the board
+                if( newLocation.row >= 1 && newLocation.row <= 8 &&
+                    newLocation.col >= 1 && newLocation.col <= 8)
+                {
+
+                    ///Only worry about locations we have not seen yet
+                    if( !containsLocation(seenLocations, newLocation) ) {
+
+                        ///Make a serach state based on the new location added to the current search path
+                        Stack<Location> newState = curState;
+                        newState.push(newLocation);
+
+                        ///Add the new state to the queue of things to try
+                        cout << newState << " ";
+                        storage.enqueue(newState);
+
+                        ///And add location to list of seenLocations
+                        seenLocations.push_back(newLocation);
+                    }
+                }
+
+            }
+        }
+    }
+
+}
